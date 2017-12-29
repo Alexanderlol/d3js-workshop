@@ -27,33 +27,84 @@ var el = d3.select('body')
 console.log(el);*/
 
 /* Displaying Data */
-var dataset = [10, 20, 30, 40, 50];
+// var dataset = [10, 20, 30, 40, 50];
 
-var el = d3.select('body')
-		.selectAll('p')
-		.data(dataset)
-		.enter()
-		.append('p')
-		.text(function(d){
-			return 'This paragraph is binded to the number ' + d;
-		})
-		.attr('class', function(d){
-			if (d > 25){
-				return 'foo';
-			} else {
-				return null;
-			}
-		})
-		.classed('bar', function(d){
-			return d < 25; 
-		})
-		.style('color', function(d){
-			if(d > 25) {
-				return 'red';
-			} else {
-				return 'blue';
-			}
-		});
+// var el = d3.select('body')
+// 		.selectAll('p')
+// 		.data(dataset)
+// 		.enter()
+// 		.append('p')
+// 		.text(function(d){
+// 			return 'This paragraph is binded to the number ' + d;
+// 		})
+// 		.attr('class', function(d){
+// 			if (d > 25){
+// 				return 'foo';
+// 			} else {
+// 				return null;
+// 			}
+// 		})
+// 		.classed('bar', function(d){
+// 			return d < 25; 
+// 		})
+// 		.style('color', function(d){
+// 			if(d > 25) {
+// 				return 'red';
+// 			} else {
+// 				return 'blue';
+// 			}
+// 		});
 
-console.log(el);
+// console.log(el);
 
+/* Loading Data Externally */
+
+d3.csv('data.csv', function(err, data){
+	if(err){
+		return console.log(err);
+	}
+	console.log(data);
+	//generate(data.columns);
+});
+
+d3.json('data.json', function(err, data){
+	if(err){
+		return console.log(err);
+	}
+
+	//console.log(data);
+	//generate(data);
+});
+
+function generate(dataset){
+
+	//var dataset = [10, 20, 30, 40, 50];
+
+	var el = d3.select('body')
+			.selectAll('p')
+			.data(dataset)
+			.enter()
+			.append('p')
+			.text(function(d){
+				return 'This paragraph is binded to the number ' + d;
+			})
+			.attr('class', function(d){
+				if (d > 25){
+					return 'foo';
+				} else {
+					return null;
+				}
+			})
+			.classed('bar', function(d){
+				return d < 25; 
+			})
+			.style('color', function(d){
+				if(d > 25) {
+					return 'red';
+				} else {
+					return 'blue';
+				}
+			});
+
+	console.log(el);
+};
