@@ -167,80 +167,201 @@ svg.selectAll('text')
 		.attr('fill', '#fff')
 		.attr('text-anchor', 'middle'); */
 
-/* Scatter Plot */
+/* Scatter Plot  w/ axis */
 
 var data            =   [
     [ 400, 200 ],
-    [ 210,140 ],
-    [ 722,300 ],
-    [ 70,160 ],
-    [ 250,50 ],
-    [ 110,280 ],
-    [ 699,225 ],
+    [ 210, 140 ],
+    [ 722, 300 ],
+    [ 70, 160 ],
+    [ 250, 50 ],
+    [ 110, 280 ],
+    [ 699, 225 ],
     [ 90, 220 ]
 ];
-
 var chart_width     =   800;
 var chart_height    =   400;
 var padding         =   50;
 
-// Create SVG element
+// Create SVG Element
+var svg             =   d3.select( '#chart' )
+    .append( 'svg' )
+    .attr( 'width', chart_width )
+    .attr( 'height', chart_height );
 
-var svg = d3.select('#chart')
-		.append('svg')
-		.attr('width', chart_width)
-		.attr('height', chart_height);
+// Create Scales
+var x_scale         =   d3.scaleLinear()
+    .domain([0, d3.max(data, function(d){
+        return d[0];
+    })])
+    .range([ padding, chart_width - padding * 2 ]);
 
-// Create scales
+var y_scale         =   d3.scaleLinear()
+    .domain([ 0, d3.max(data, function(d){
+        return d[1];
+    })])
+    .range([ chart_height - padding, padding ]);
 
-var x_scale = d3.scaleLinear()
-		.domain([0, d3.max(data, function(d){
-			return d[0];
-		})])
-		.range([padding, chart_width - padding * 2]);
+var r_scale         =   d3.scaleLinear()
+    .domain([0, d3.max(data, function( d ){
+        return d[1];
+    })])
+    .range([5, 30]);
 
-var y_scale = d3.scaleLinear()
-		.domain([0, d3.max(data, function(d){
-			return d[1];
-		})])
-		.range([chart_height - padding, padding]);
+var a_scale         =   d3.scaleSqrt()
+    .domain([ 0, d3.max(data, function(d) {
+        return d[1];
+    })])
+    .range([ 0, 25 ]);
 
-var r_scale = d3.scaleLinear()
-		.domain([0, d3.max(data, function(d){
-			return d[1];
-		})])
-		.range([5, 30]);
+ // Create Axis
+var x_axis          =   d3.axisBottom(x_scale);
+		//.ticks(5);
+		//.tickValues([0, 150, 250, 600, 700]);
 
-// Create circles
-svg.selectAll('circle')
-		.data(data)
-		.enter()
-		.append('circle')
-		.attr('cx', function(d){
-			return x_scale(d[0]);
-		})
-		.attr('cy', function(d){
-			return y_scale(d[1]);
-		})
-		.attr('r', function(d){
-			return d[1] / 10;
-		})
-		.attr('fill', '#D1AB0E');
+ svg.append('g')
+ 			.attr('class', 'x-axis')
+ 			.attr('transform', 'translate(0,' + (chart_height - padding) + ')')
+ 			.call(x_axis);
 
-// Create labels
-svg.selectAll('text')
-		.data(data)
-		.enter()
-		.append('text')
-		.text(function(d){
-			return d.join(',');
-		})
-		.attr('x', function(d){
-			return x_scale(d[0]);
-		})
-		.attr('y', function(d){
-			return y_scale(d[1]);
-		});
+var y_axis          =   d3.axisLeft(y_scale)
+		.ticks(5);
+		// .tickFormat(function(d){
+		// 	return d + '%';
+		// });
+
+ svg.append('g')
+ 			.attr('class', 'y-axis')
+ 			.attr('transform', 'translate(' + padding + ', 0 )')
+ 			.call(y_axis);
+
+// Create Circles
+svg.selectAll( 'circle' )
+    .data( data )
+    .enter()
+    .append( 'circle' )
+    .attr("cx", function(d) {
+        return x_scale(d[0]);
+    })
+    .attr("cy", function(d) {
+        return y_scale(d[1]);
+    })
+    .attr("r", function(d){
+        return a_scale(d[1]);
+    })
+    .attr( 'fill', '#D1AB0E' );
+
+// Create Labels
+svg.append('g')
+		.selectAll( 'text' )
+    .data( data )
+    .enter()
+    .append( 'text' )
+    .text(function(d) {
+        return d.join( ',' );
+    })
+    .attr("x", function(d) {
+        return x_scale(d[0]);
+    })
+    .attr("y", function(d) {
+        return y_scale(d[1]);
+    });
+
+/* Time Scale scatter plot */
+
+// var data = [
+// 		{ date: '07/01/2017', num: 20 },
+// 		{ date: '07/02/2017', num: 37 },
+// 		{ date: '07/03/2017', num: 25 },
+// 		{ date: '07/04/2017', num: 45 },
+// 		{ date: '07/05/2017', num: 23 },
+// 		{ date: '07/06/2017', num: 33 },
+// 		{ date: '07/07/2017', num: 49 },
+// 		{ date: '07/08/2017', num: 40 },
+// 		{ date: '07/09/2017', num: 36 },
+// 		{ date: '07/10/2017', num: 27 }
+// ];
+
+// var time_parse      =   d3.timeParse('%m/%d/%Y');
+// var time_format     =   d3.timeFormat('%b %e')
+// var chart_width     =   800;
+// var chart_height    =   400;
+// var padding         =   50;
+
+// // Loop through each date
+
+// data.forEach(function(e, i){
+// 	data[i].date = time_parse(e.date);
+// });
+
+// // Create SVG element
+
+// var svg = d3.select('#chart')
+// 		.append('svg')
+// 		.attr('width', chart_width)
+// 		.attr('height', chart_height);
+
+// // Create scales
+
+// var x_scale = d3.scaleTime()
+// 		.domain([
+// 			d3.min(data, function(d){
+// 				return d.date;
+// 			}), 
+// 			d3.max(data, function(d){
+// 			return d.date;
+// 			})
+// 		])
+// 		.range([padding, chart_width - padding * 2]);
+
+// var y_scale = d3.scaleLinear()
+// 		.domain([0, d3.max(data, function(d){
+// 			return d.num;
+// 		})])
+// 		.range([chart_height - padding, padding]);
+
+// var r_scale = d3.scaleLinear()
+// 		.domain([0, d3.max(data, function(d){
+// 			return d[1];
+// 		})])
+// 		.range([5, 30]);
+
+// var a_scale = d3.scaleSqrt()
+// 		.domain([0, d3.max(data, function(d){
+// 			return d.num;
+// 		})])
+// 		.range([0, 25]);
+
+// // Create circles
+// svg.selectAll('circle')
+// 		.data(data)
+// 		.enter()
+// 		.append('circle')
+// 		.attr('cx', function(d){
+// 			return x_scale(d.date);
+// 		})
+// 		.attr('cy', function(d){
+// 			return y_scale(d.num);
+// 		})
+// 		.attr('r', function(d){
+// 			return a_scale(d.num);
+// 		})
+// 		.attr('fill', '#D1AB0E');
+
+// // Create labels
+// svg.selectAll('text')
+// 		.data(data)
+// 		.enter()
+// 		.append('text')
+// 		.text(function(d){
+// 			return time_format(d.date);
+// 		})
+// 		.attr('x', function(d){
+// 			return x_scale(d.date);
+// 		})
+// 		.attr('y', function(d){
+// 			return y_scale(d.num);
+// 		});
 
 /* Scales */
 
