@@ -534,6 +534,15 @@ var y_scale         =   d3.scaleLinear()
 //     })])
 //     .range([ 0, 25 ]);
 
+//Clip Paths
+svg.append("clipPath")
+		.attr('id', 'plot-area-clip-path')
+		.append('rect')
+		.attr('x', padding)
+		.attr('y', padding)
+		.attr('width', chart_width - padding * 3)
+		.attr('height', chart_height - padding * 2);
+
 // Create Axis
 var x_axis          =   d3.axisBottom( x_scale );
 
@@ -557,7 +566,10 @@ svg.append( 'g' )
     .call( y_axis );
 
 // Create Circles
-svg.selectAll( 'circle' )
+svg.append('g')
+		.attr('id', 'plot-area')
+		.attr('clip-path', "url(#plot-area-clip-path)")
+		.selectAll( 'circle' )
     .data( data )
     .enter()
     .append( 'circle' )
